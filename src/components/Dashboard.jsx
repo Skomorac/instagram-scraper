@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_BACKEND_URL_NS;
 
   const handleFetchComments = async (event) => {
     event.preventDefault();
