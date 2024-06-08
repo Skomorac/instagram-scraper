@@ -29,11 +29,14 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${backendUrl}/api/fetch-comments`,
+        `${backendUrl}/api/fetch-comments-instaloader-batch`,
         { username, password, postLink },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCommenters(response.data.commenters);
+      const sortedCommenters = response.data.commenters.sort((a, b) =>
+        a.localeCompare(b)
+      );
+      setCommenters(sortedCommenters);
       setWinner(response.data.winner);
       setLoading(false);
       Swal.fire({
@@ -86,14 +89,18 @@ const Dashboard = () => {
 
       {commenters.length > 0 && (
         <>
+          <h2>Winner:</h2>
+          <p>{winner}</p>
+          <p>Total number of commenters: {commenters.length}</p>
+
           <h2>All Commenters:</h2>
           <ListGroup>
             {commenters.map((commenter, index) => (
-              <ListGroup.Item key={index}>{commenter}</ListGroup.Item>
+              <ListGroup.Item key={index}>
+                {index + 1}. {commenter}
+              </ListGroup.Item>
             ))}
           </ListGroup>
-          <h2>Winner:</h2>
-          <p>{winner}</p>
         </>
       )}
     </Container>
