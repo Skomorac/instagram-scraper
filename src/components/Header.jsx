@@ -34,7 +34,7 @@ const Header = () => {
     >
       <Container>
         {location.pathname === "/dashboard" ? (
-          <Navbar.Brand>{i18n.t("RemindME")}</Navbar.Brand>
+          <Navbar.Brand>Instagram Scraper</Navbar.Brand>
         ) : (
           <Navbar.Brand as={Link} to="/">
             {i18n.t("RemindME")}
