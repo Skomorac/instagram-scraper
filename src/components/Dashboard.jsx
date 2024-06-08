@@ -113,6 +113,10 @@ const Dashboard = () => {
     });
   };
 
+  const getInstagramProfileUrl = (username) => {
+    return `https://www.instagram.com/${username}/`;
+  };
+
   return (
     <Container className="main-container-dashboard">
       <h1>Instagram Giveaway Picker</h1>
@@ -152,7 +156,16 @@ const Dashboard = () => {
       {!loading && commenters.length > 0 && (
         <>
           <h2>Winner:</h2>
-          <p>{winner}</p>
+          <p>
+            <a
+              href={getInstagramProfileUrl(winner)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="winner-link"
+            >
+              {winner}
+            </a>
+          </p>
           <Button variant="secondary" onClick={handleChooseNewWinner}>
             Choose New Winner
           </Button>

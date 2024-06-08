@@ -3,6 +3,7 @@
   background: linear-gradient(to right, #6a11cb, #2575fc);
   margin-top: 50px;
   border-radius: 10px;
+  color: white;
 }
 
 .main-container-dashboard h1 {
@@ -29,4 +30,27 @@
   margin-top: 10px;
   font-size: 1.2rem;
   color: #fff;
+}
+
+.winner-link {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #ff4081;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  box-shadow: 0 5px #c6366a;
+  transition: all 0.2s;
+}
+
+.winner-link:hover {
+  background-color: #ff80ab;
+  box-shadow: 0 3px #c6366a;
+  transform: translateY(-2px);
+}
+
+.winner-link:active {
+  box-shadow: 0 0 #c6366a;
+  transform: translateY(4px);
 }
