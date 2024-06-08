@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Form, Button, ListGroup, Spinner } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
@@ -11,12 +12,15 @@ const Dashboard = () => {
   const [commenters, setCommenters] = useState([]);
   const [winner, setWinner] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleFetchComments = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setCommenters([]);
+    setWinner("");
 
     try {
       const token = localStorage.getItem("token");
@@ -38,8 +42,22 @@ const Dashboard = () => {
       });
     } catch (error) {
       setLoading(false);
+      if (error.response && error.response.status === 401) {
+        Swal.fire({
+          title: "Session expired",
+          text: "Your session has expired, please log in again.",
+          icon: "warning",
+        }).then(() => {
+          localStorage.removeItem("token");
+          navigate("/login");
+        });
+      } else {
+        setPostLink("");
+        setWinner("");
+        setCommenters([]);
+        Swal.fire("Error", "Could not fetch comments", "error");
+      }
       console.error("Error fetching comments", error);
-      Swal.fire("Error", "Could not fetch comments", "error");
     }
   };
 
