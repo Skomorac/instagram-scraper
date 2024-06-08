@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Container, Form, Button, ListGroup, Spinner } from "react-bootstrap";
+import { Container, Form, Button, ListGroup } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
+
+const MySwal = withReactContent(Swal);
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
@@ -11,6 +14,7 @@ const Dashboard = () => {
   const [postLink, setPostLink] = useState("");
   const [commenters, setCommenters] = useState([]);
   const [winner, setWinner] = useState("");
+  const [selectedWinners, setSelectedWinners] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -21,44 +25,92 @@ const Dashboard = () => {
     setLoading(true);
     setCommenters([]);
     setWinner("");
+    setSelectedWinners([]);
 
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${backendUrl}/api/fetch-comments-instaloader-batch`,
-        { username, password, postLink },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const sortedCommenters = response.data.commenters.sort((a, b) =>
-        a.localeCompare(b)
-      );
-      setCommenters(sortedCommenters);
-      setWinner(response.data.winner);
-      setLoading(false);
-      Swal.fire({
-        title: "Data fetched!",
-        text: `Winner is ${response.data.winner}`,
-        icon: "success",
-      });
-    } catch (error) {
-      setLoading(false);
-      if (error.response && error.response.status === 401) {
+    const fetchComments = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${backendUrl}/api/fetch-comments-instaloader-batch`,
+          { username, password, postLink },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const sortedCommenters = response.data.commenters.sort((a, b) =>
+          a.localeCompare(b)
+        );
+        setCommenters(sortedCommenters);
+        const initialWinner = response.data.winner;
+        setWinner(initialWinner);
+        setSelectedWinners([initialWinner]);
+        setLoading(false);
+        MySwal.close();
         Swal.fire({
-          title: "Session expired",
-          text: "Your session has expired, please log in again.",
-          icon: "warning",
-        }).then(() => {
-          localStorage.removeItem("token");
-          navigate("/login");
+          title: "Data fetched!",
+          text: `Winner is ${initialWinner}`,
+          icon: "success",
         });
-      } else {
-        setPostLink("");
-        setWinner("");
-        setCommenters([]);
-        Swal.fire("Error", "Could not fetch comments", "error");
+      } catch (error) {
+        setLoading(false);
+        MySwal.close();
+        if (error.response && error.response.status === 401) {
+          Swal.fire({
+            title: "Session expired",
+            text: "Your session has expired, please log in again.",
+            icon: "warning",
+          }).then(() => {
+            localStorage.removeItem("token");
+            navigate("/login");
+          });
+        } else {
+          setPostLink("");
+          setWinner("");
+          setCommenters([]);
+          Swal.fire("Error", "Could not fetch comments", "error");
+        }
+        console.error("Error fetching comments", error);
       }
-      console.error("Error fetching comments", error);
+    };
+
+    MySwal.fire({
+      title: "Fetching Data",
+      text: "Data is being pulled from the server. Please wait, this process can take up to 5 minutes in case of more than 1,000 comments.",
+      allowOutsideClick: false,
+      showCancelButton: true,
+      cancelButtonText: "Cancel",
+      didOpen: () => {
+        MySwal.showLoading();
+        fetchComments();
+      },
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.cancel) {
+        setLoading(false);
+      }
+    });
+  };
+
+  const handleChooseNewWinner = () => {
+    const remainingCommenters = commenters.filter(
+      (commenter) => !selectedWinners.includes(commenter)
+    );
+    if (remainingCommenters.length === 0) {
+      Swal.fire(
+        "No more commenters",
+        "All commenters have been selected",
+        "info"
+      );
+      return;
     }
+    const newWinner =
+      remainingCommenters[
+        Math.floor(Math.random() * remainingCommenters.length)
+      ];
+    setWinner(newWinner);
+    setSelectedWinners([...selectedWinners, newWinner]);
+    Swal.fire({
+      title: "New Winner Selected!",
+      text: `New winner is ${newWinner}`,
+      icon: "success",
+    });
   };
 
   return (
@@ -97,19 +149,13 @@ const Dashboard = () => {
         </Button>
       </Form>
 
-      {loading && (
-        <div className="loading-screen">
-          <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-          <p>Data is being pulled from the server. Please wait...</p>
-        </div>
-      )}
-
       {!loading && commenters.length > 0 && (
         <>
           <h2>Winner:</h2>
           <p>{winner}</p>
+          <Button variant="secondary" onClick={handleChooseNewWinner}>
+            Choose New Winner
+          </Button>
           <p>Total number of commenters: {commenters.length}</p>
 
           <h2>All Commenters:</h2>
