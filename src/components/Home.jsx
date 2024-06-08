@@ -1,62 +1,67 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Button } from "react-bootstrap";
-import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
+import "../styles/Home.css";
 
 const Home = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
     <div className="container main-container-home">
       {/* Hero Section */}
       <section className="hero-section">
-        <h1 className="hero-title">{t("welcome_to_remindme")}</h1>
-        <p className="hero-subtitle">{t("hero_subtitle")}</p>
+        <h1 className="hero-title">Welcome to the Instagram Scraper</h1>
+        <p className="hero-subtitle">
+          Easily scrape and analyze Instagram posts and comments
+        </p>
         <Button
           onClick={() => navigate("/login")}
           variant="primary"
           className="cta-button"
         >
-          {t("get_started")}
+          Get Started
         </Button>
       </section>
 
       {/* About Section */}
       <section className="about-section">
-        <h2>{t("about_title")}</h2>
-        <p>{t("about_description")}</p>
+        <h2>About Instagram Scraper</h2>
+        <p>
+          Instagram Scraper is a tool that allows you to fetch comments, analyze
+          user engagement, and select winners for your Instagram giveaways.
+        </p>
       </section>
 
       {/* Features Section */}
       <section className="features-section">
-        <h2>{t("features_title")}</h2>
+        <h2>Features</h2>
         <div className="features-list">
           <div className="feature-item">
-            <h3>{t("feature_one_title")}</h3>
-            <p>{t("feature_one_description")}</p>
+            <h3>Fetch Comments</h3>
+            <p>Easily fetch all comments from any public Instagram post.</p>
           </div>
           <div className="feature-item">
-            <h3>{t("feature_two_title")}</h3>
-            <p>{t("feature_two_description")}</p>
+            <h3>Analyze Engagement</h3>
+            <p>
+              Analyze user engagement with detailed statistics and insights.
+            </p>
           </div>
           <div className="feature-item">
-            <h3>{t("feature_three_title")}</h3>
-            <p>{t("feature_three_description")}</p>
+            <h3>Select Winners</h3>
+            <p>Randomly select winners for your Instagram giveaways.</p>
           </div>
         </div>
       </section>
 
       {/* Call-to-Action Section */}
       <section className="cta-section">
-        <h2>{t("cta_title")}</h2>
+        <h2>Ready to get started?</h2>
         <Button
           onClick={() => navigate("/signup")}
           variant="success"
           className="cta-button"
         >
-          {t("sign_up_now")}
+          Sign Up Now
         </Button>
       </section>
     </div>
