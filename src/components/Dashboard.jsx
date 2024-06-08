@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Form, Button, ListGroup } from "react-bootstrap";
+import { Container, Form, Button, ListGroup, Spinner } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "../styles/Dashboard.css";
@@ -17,14 +17,6 @@ const Dashboard = () => {
   const handleFetchComments = async (event) => {
     event.preventDefault();
     setLoading(true);
-    Swal.fire({
-      title: "Fetching data...",
-      text: "Please wait while we fetch the comments and select a winner.",
-      allowOutsideClick: false,
-      onBeforeOpen: () => {
-        Swal.showLoading();
-      },
-    });
 
     try {
       const token = localStorage.getItem("token");
@@ -87,7 +79,16 @@ const Dashboard = () => {
         </Button>
       </Form>
 
-      {commenters.length > 0 && (
+      {loading && (
+        <div className="loading-screen">
+          <Spinner animation="border" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+          <p>Data is being pulled from the server. Please wait...</p>
+        </div>
+      )}
+
+      {!loading && commenters.length > 0 && (
         <>
           <h2>Winner:</h2>
           <p>{winner}</p>
