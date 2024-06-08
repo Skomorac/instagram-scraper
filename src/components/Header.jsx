@@ -1,19 +1,13 @@
 import React, { useState } from "react";
-import { Navbar, Nav, NavDropdown, Container, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import "../styles/Header.css";
 
 const Header = () => {
-  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("token");
   const [expanded, setExpanded] = useState(false); // State to manage navbar collapse
-
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -34,10 +28,10 @@ const Header = () => {
     >
       <Container>
         {location.pathname === "/dashboard" ? (
-          <Navbar.Brand>{i18n.t("RemindME")}</Navbar.Brand>
+          <Navbar.Brand>Instagram Scraper</Navbar.Brand>
         ) : (
           <Navbar.Brand as={Link} to="/">
-            {i18n.t("RemindME")}
+            Instagram Scraper
           </Navbar.Brand>
         )}
         <Navbar.Toggle
@@ -55,7 +49,7 @@ const Header = () => {
                     to="/login"
                     onClick={() => setExpanded(false)}
                   >
-                    {i18n.t("login")}
+                    Login
                   </Nav.Link>
                 )}
                 {location.pathname !== "/signup" && (
@@ -64,26 +58,14 @@ const Header = () => {
                     to="/signup"
                     onClick={() => setExpanded(false)}
                   >
-                    {i18n.t("signup")}
+                    Signup
                   </Nav.Link>
                 )}
               </>
             )}
-            <NavDropdown
-              title={i18n.t("language")}
-              id="basic-nav-dropdown"
-              className="ms-auto"
-            >
-              <NavDropdown.Item onClick={() => changeLanguage("en")}>
-                EN
-              </NavDropdown.Item>
-              <NavDropdown.Item onClick={() => changeLanguage("bs")}>
-                BS
-              </NavDropdown.Item>
-            </NavDropdown>
             {token && (
               <Button variant="link" onClick={handleLogout}>
-                {i18n.t("logout")}
+                Logout
               </Button>
             )}
           </Nav>
